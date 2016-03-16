@@ -1,0 +1,34 @@
+{
+    "name": "paultheb/pipio",
+    "description": "Pipio is an evented interface for scalable, service oriented applications in PHP.",
+    "homepage": "https://github.com/paultheb/pipio",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paul Theberge",
+            "email": "theberge.paul@gmail.com"
+        },
+        {
+            "name": "Jonathan Rich",
+            "email": "jdrich@gmail.com",
+            "homepage": "http://jonathanri.ch"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "5.0.*",
+        "php-amqplib/php-amqplib": "2.5.*",
+        "monolog/monolog": "1.13.*",
+        "symfony/console": "3.0.*"
+    },
+    "suggest": {
+        "php-amqplib/php-amqplib": "Allows application to communicate between worker processes.",
+        "monolog/monolog": "Allows event activity to be logged.",
+        "symfony/console": "Allows easy initialization of worker processes."
+    },
+    "autoload": {
+        "psr-4": {
+            "Pipio\\": "src/",
+            "Pipio\\Test\\": "test/"
+        }
+    }
+}
