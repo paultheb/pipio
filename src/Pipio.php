@@ -4,26 +4,98 @@ namespace Pipio;
 
 class Pipio {
     const DESCRIPTOR_LIMIT = 255;
+    const DEFAULT_TIMEOUT = 30;
 
     protected $channel;
     protected $logger;
-
+    protected $timeout;
+    protected $listeners;
+    protected $count_listeners;
+    protected $events;
 
     public function __construct($channel = null, $logger = null) {
         $this->channel = $channel;
         $this->logger = $logger;
+
+        $this->listeners = [];
+        $this->events = [];
+        $this->count_listeners = 0;
+
+        $this->setTimeout(self::DEFAULT_TIMEOUT);
     }
 
     public function emit($event, $message) {
-
+        if($this->hasListeners($event)) {
+            $this->events[] = [$this->convertEventDescriptor($event), $message];
+        }
     }
 
     public function on($event, $name = null, callback $callback) {
-
+        $this->addListener($event, $name, $callback);
     }
 
-    public function wait($timeout) {
+    public function wait(int $timeout = null) {
+        if($timeout !== null) {
+            $this->setTimeout($timeout);
+        }
 
+        $continue = true;
+
+        $last = time();
+
+        while($continue) {
+            if() {
+                // @todo Actually handle events here.
+            }
+
+            $continue = ($last + $this->timeout > time()) && $this->count_listeners != 0;
+        }
+    }
+
+    public function addListener($event, $name = null, callback $callback) {
+        $event = $this->convertEventDescriptor($event);
+
+        if(!isset($this->listeners[$event])) {
+            $this->listeners[$event] = [];
+        }
+
+        if(isset($this->listeners[$event][$name])) {
+            throw new \InvalidArgumentException('Cannot add named listener. A listener with that name already exists.');
+        }
+
+        while($name === null || isset($this->listeners[$event][$name])) {
+            $name = $this->generateName($event);
+        }
+
+        $this->listeners[$event][$name] = $callback;
+
+        $this->count_listeners++;
+
+        return $name;
+    }
+
+    public function removeListener($event, $name) {
+        if(!isset($this->listeners[$event])) {
+            return false;
+        }
+
+        if(!isset($this->listeners[$event][$name])) {
+            return false;
+        }
+
+        unset($this->listeners[$event][$name]);
+
+        $this->count_listeners--;
+
+        return true;
+    }
+
+    public function hasListeners($event) {
+        return isset($this->listeners[$event]) && (count($this->listeners[$event]) > 0);
+    }
+
+    public function setTimeout(int $timeout) {
+        $this->timeout = $timeout;
     }
 
     public function __call($name, array $arguments) {
@@ -63,5 +135,9 @@ class Pipio {
         }
 
         return $descriptor;
+    }
+
+    protected function generateName($event) {
+        return md5($event . microtime());
     }
 }
