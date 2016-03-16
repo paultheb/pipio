@@ -31,7 +31,7 @@ class Pipio {
             $event = substr($name, 4);
 
             if(count($arguments) != 1) {
-                throw new \BadMethodCallException('Invalid overload for __call. Pipio::emit expects one argument.');
+                throw new \InvalidArgumentException('Invalid overload for __call. Pipio::emit expects one argument.');
             }
 
             return $this->emit($event, $arguments[0]);
@@ -39,13 +39,13 @@ class Pipio {
             $event = substr($name, 2);
 
             if(count($arguments) != 2) {
-                throw new \BadMethodCallException('Invalid overload for __call. Pipio::on expects two arguments.');
+                throw new \InvalidArgumentException('Invalid overload for __call. Pipio::on expects two arguments.');
             }
 
             return $this->on($event, $arguments[0], $arguments[1]);
         }
 
-        throw new \InvalidArgumentException('Undefined overload for _call: ' . $name);
+        throw new \BadMethodCallException('Undefined overload for _call: ' . $name);
     }
 
     public function convertEventDescriptor($descriptor) {

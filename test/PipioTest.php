@@ -5,6 +5,30 @@ namespace Pipio\Test;
 use Pipio\Pipio;
 
 class PipioTest extends \PHPUnit_Framework_TestCase {
+    public function testCallOverrideThrowsExceptionOnBadMethod() {
+        $this->setExpectedException('BadMethodCallException');
+
+        $pipio = new Pipio();
+
+        $pipio->methodDoesNotExist();
+    }
+
+    public function testCallOverrideThrowsExceptionOnBadEmitCall() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $pipio = new Pipio();
+
+        $pipio->emitTestEvent();
+    }
+
+    public function testCallOverrideThrowsExceptionOnBadOnCall() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $pipio = new Pipio();
+
+        $pipio->onTestEvent(3, 7, 9);
+    }
+
     public function testConvertEventDescriptorThrowsExceptionOnOverflowLength() {
         $this->setExpectedException('OutOfBoundsException');
 
