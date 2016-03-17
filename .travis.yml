@@ -10,4 +10,4 @@ php:
 install:
   - composer install
   
-script: phpunit --bootstrap "vendor/autoload.php"
+script: phpunit --bootstrap "vendor/autoload.php" test/
