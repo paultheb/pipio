@@ -24,14 +24,36 @@ class Pipio {
         $this->setTimeout(self::DEFAULT_TIMEOUT);
     }
 
+    public function __call($name, array $arguments) {
+        if(strpos($name, 'emit') === 0) {
+            $event = substr($name, 4);
+
+            if(count($arguments) != 1) {
+                throw new \InvalidArgumentException('Invalid overload for __call. Pipio::emit expects one argument.');
+            }
+
+            return $this->emit($event, $arguments[0]);
+        } elseif(strpos($name, 'on') === 0) {
+            $event = substr($name, 2);
+
+            if(count($arguments) != 2) {
+                throw new \InvalidArgumentException('Invalid overload for __call. Pipio::on expects two arguments.');
+            }
+
+            return $this->on($event, $arguments[0], $arguments[1]);
+        }
+
+        throw new \BadMethodCallException('Undefined overload for _call: ' . $name);
+    }
+
     public function emit($event, $message) {
         if($this->hasListeners($event)) {
             $this->events[] = [$this->convertEventDescriptor($event), $message];
         }
     }
 
-    public function on($event, $name = null, callback $callback) {
-        $this->addListener($event, $name, $callback);
+    public function on($event, $name = null, callable $callback) {
+        return $this->addListener($event, $name, $callback);
     }
 
     public function wait(int $timeout = null) {
@@ -60,7 +82,7 @@ class Pipio {
         }
     }
 
-    public function addListener($event, $name = null, callback $callback) {
+    public function addListener($event, $name = null, callable $callback) {
         $event = $this->convertEventDescriptor($event);
 
         if(!isset($this->listeners[$event])) {
@@ -74,6 +96,8 @@ class Pipio {
         while($name === null || isset($this->listeners[$event][$name])) {
             $name = $this->generateName($event);
         }
+
+        $name = $this->convertEventDescriptor($name);
 
         $this->listeners[$event][$name] = $callback;
 
@@ -106,28 +130,6 @@ class Pipio {
         $this->timeout = $timeout;
     }
 
-    public function __call($name, array $arguments) {
-        if(strpos($name, 'emit') === 0) {
-            $event = substr($name, 4);
-
-            if(count($arguments) != 1) {
-                throw new \InvalidArgumentException('Invalid overload for __call. Pipio::emit expects one argument.');
-            }
-
-            return $this->emit($event, $arguments[0]);
-        } elseif(strpos($name, 'on') === 0) {
-            $event = substr($name, 2);
-
-            if(count($arguments) != 2) {
-                throw new \InvalidArgumentException('Invalid overload for __call. Pipio::on expects two arguments.');
-            }
-
-            return $this->on($event, $arguments[0], $arguments[1]);
-        }
-
-        throw new \BadMethodCallException('Undefined overload for _call: ' . $name);
-    }
-
     protected function convertEventDescriptor($descriptor) {
         $descriptor = str_replace('\\', '.', $descriptor);
         $descriptor = preg_replace('/[-_\|]/', '.', $descriptor);
@@ -146,6 +148,16 @@ class Pipio {
     }
 
     protected function generateName($event) {
-        return md5($event . microtime());
+        $valid = array_flip(str_split('abcdefghijklmnopqrstuvwxyz'));
+        $length = 32;
+        $name = '';
+
+        while($length > 0) {
+            $name .= array_rand($valid);
+
+            $length--;
+        }
+
+        return $name;
     }
 }

@@ -9,7 +9,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testCallOverrideThrowsExceptionOnBadMethod() {
         $this->setExpectedException('BadMethodCallException');
 
-        $pipio = new SimPipio();
+        $pipio = new Pipio();
 
         $pipio->methodDoesNotExist();
     }
@@ -17,7 +17,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testCallOverrideThrowsExceptionOnBadEmitCall() {
         $this->setExpectedException('InvalidArgumentException');
 
-        $pipio = new SimPipio();
+        $pipio = new Pipio();
 
         $pipio->emitTestEvent();
     }
@@ -25,9 +25,40 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testCallOverrideThrowsExceptionOnBadOnCall() {
         $this->setExpectedException('InvalidArgumentException');
 
-        $pipio = new SimPipio();
+        $pipio = new Pipio();
 
         $pipio->onTestEvent(3, 7, 9);
+    }
+
+    public function testEmitNoListener() {
+        $pipio = new Pipio();
+        $pipio->emit('Test', 'Test message');
+    }
+
+    public function testOnThrowsExceptionOnOverflowLength() {
+        $this->setExpectedException('OutOfBoundsException');
+
+        $pipio = new Pipio();
+        $pipio->on('Test', str_repeat('a', 256), function ($event, $message) {});
+    }
+
+    public function testOnThrowsExceptionOnUnderflowLength() {
+        $this->setExpectedException('OutOfBoundsException');
+
+        $pipio = new Pipio();
+        $pipio->on('Test', '', function ($event, $message) {});
+    }
+
+    public function testOnCreatesValidName() {
+        $pipio = new Pipio();
+
+        $name = $pipio->on('Test', null, function($event, $message) {});
+
+        $this->assertEquals(strlen($name), 32);
+
+        $name = $pipio->on('Test', 'TestTest', function($event, $message) {});
+
+        $this->assertEquals($name, 'test.test');
     }
 
     public function testConvertEventDescriptorThrowsExceptionOnOverflowLength() {
