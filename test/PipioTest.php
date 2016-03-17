@@ -1,6 +1,6 @@
 <?php
 
-namespace Pipio\Test;
+namespace Pipio\Test\Pipio;
 
 use Pipio\Pipio;
 use Pipio\Test\Sim\Pipio as SimPipio;
@@ -110,12 +110,12 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertLessThan(1, time() - $before);
 
-        $pipio->setTimeout(30);
+        $pipio->setTimeout(15);
 
         $pipio->wait();
 
-        $this->assertLessThan(31, time() - $before);
-        $this->assertGreaterThan(29, time() - $before);
+        $this->assertLessThan(16, time() - $before);
+        $this->assertGreaterThan(14, time() - $before);
     }
 
     public function testPipio() {

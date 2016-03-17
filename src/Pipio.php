@@ -10,10 +10,14 @@ class Pipio {
     protected $listeners;
     protected $count_listeners;
     protected $events;
+    protected $producers;
+    protected $consumers;
 
     public function __construct() {
         $this->listeners = [];
         $this->events = [];
+        $this->producers = [];
+        $this->consumers = [];
         $this->count_listeners = 0;
 
         $this->setTimeout(self::DEFAULT_TIMEOUT);
@@ -41,9 +45,21 @@ class Pipio {
         throw new \BadMethodCallException('Undefined overload for _call: ' . $name);
     }
 
+    public function addProducer(Producer $producer) {
+        $this->producers[] = $producer;
+    }
+
+    public function addConsumer(Consumer $consumer) {
+        $this->consumers[] = $consumer;
+    }
+
     public function emit($event, $message = null) {
         if($this->hasListeners($event)) {
             $this->events[] = [$this->convertEventDescriptor($event), $message];
+        }
+
+        foreach($this->producers as $producer) {
+            $producer->emit($event, $message);
         }
     }
 
