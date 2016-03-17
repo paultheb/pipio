@@ -128,7 +128,7 @@ class Pipio {
         throw new \BadMethodCallException('Undefined overload for _call: ' . $name);
     }
 
-    public function convertEventDescriptor($descriptor) {
+    protected function convertEventDescriptor($descriptor) {
         $descriptor = str_replace('\\', '.', $descriptor);
         $descriptor = preg_replace('/[-_\|]/', '.', $descriptor);
         $descriptor = preg_replace('/[^a-zA-Z\.]/', '', $descriptor);

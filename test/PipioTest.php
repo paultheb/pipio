@@ -3,12 +3,13 @@
 namespace Pipio\Test;
 
 use Pipio\Pipio;
+use Pipio\Test\Sim\Pipio as SimPipio;
 
 class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testCallOverrideThrowsExceptionOnBadMethod() {
         $this->setExpectedException('BadMethodCallException');
 
-        $pipio = new Pipio();
+        $pipio = new SimPipio();
 
         $pipio->methodDoesNotExist();
     }
@@ -16,7 +17,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testCallOverrideThrowsExceptionOnBadEmitCall() {
         $this->setExpectedException('InvalidArgumentException');
 
-        $pipio = new Pipio();
+        $pipio = new SimPipio();
 
         $pipio->emitTestEvent();
     }
@@ -24,7 +25,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testCallOverrideThrowsExceptionOnBadOnCall() {
         $this->setExpectedException('InvalidArgumentException');
 
-        $pipio = new Pipio();
+        $pipio = new SimPipio();
 
         $pipio->onTestEvent(3, 7, 9);
     }
@@ -32,17 +33,17 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     public function testConvertEventDescriptorThrowsExceptionOnOverflowLength() {
         $this->setExpectedException('OutOfBoundsException');
 
-        $pipio = new Pipio();
+        $pipio = new SimPipio();
 
-        $pipio->convertEventDescriptor(str_repeat('a', 256));
+        $pipio->testConvertEventDescriptor(str_repeat('a', 256));
     }
 
     public function testConvertEventDescriptorThrowsExceptionUnderflowLength() {
         $this->setExpectedException('OutOfBoundsException');
 
-        $pipio = new Pipio();
+        $pipio = new SimPipio();
 
-        $pipio->convertEventDescriptor('');
+        $pipio->testConvertEventDescriptor('');
     }
 
     public function testConvertEventDescriptor() {
@@ -64,11 +65,11 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
             'Test\Test' => 'test.test'
         ];
 
-        $pipio = new Pipio();
+        $pipio = new SimPipio();
 
         foreach($cases as $pass => $expect) {
 
-            $this->assertEquals($expect, $pipio->convertEventDescriptor($pass));
+            $this->assertEquals($expect, $pipio->testConvertEventDescriptor($pass));
         }
     }
 }
