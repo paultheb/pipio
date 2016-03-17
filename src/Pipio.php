@@ -102,7 +102,7 @@ class Pipio {
         return isset($this->listeners[$event]) && (count($this->listeners[$event]) > 0);
     }
 
-    public function setTimeout(int $timeout) {
+    public function setTimeout($timeout) {
         $this->timeout = $timeout;
     }
 
