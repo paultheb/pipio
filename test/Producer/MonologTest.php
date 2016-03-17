@@ -9,18 +9,16 @@ class MonologTest extends \PHPUnit_Framework_TestCase {
         $event = 'potato';
         $message = 'tomato';
 
-        $temp_log_file = tmpfile();
+        $path = tempnam(sys_get_temp_dir(), 'Temp');
 
         $log = new \Monolog\Logger('test');
-        $log->pushHandler(new \Monolog\StreamHandler($temp_log_file));
+        $log->pushHandler(new \Monolog\Handler\StreamHandler($path));
 
         $monolog = new Monolog($log);
 
         $monolog->emit($event, $message);
 
-        $this->assertFileExists($temp_log_file);
-
-        $this->assertNotEmpty(file_get_contents($temp_log_file));
+        $this->assertNotEmpty(file_get_contents($path));
 
     }
 }
