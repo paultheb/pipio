@@ -44,8 +44,16 @@ class Pipio {
         $last = time();
 
         while($continue) {
-            if() {
-                // @todo Actually handle events here.
+            if(count($events)) {
+                list($event, $message) = array_shift($events);
+
+                $listeners = $this->listeners[$event];
+
+                foreach($listeners as $listener) {
+                    $listener($event, $message);
+
+                    $last = time();
+                }
             }
 
             $continue = ($last + $this->timeout > time()) && $this->count_listeners != 0;
