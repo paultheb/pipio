@@ -5,8 +5,10 @@ namespace Pipio;
 class Pipio {
     const DESCRIPTOR_LIMIT = 255;
     const DEFAULT_TIMEOUT = 30;
+    const DEFAULT_TICK = 0;
 
     protected $timeout;
+    protected $tick;
     protected $listeners;
     protected $count_listeners;
     protected $events;
@@ -21,6 +23,7 @@ class Pipio {
         $this->count_listeners = 0;
 
         $this->setTimeout(self::DEFAULT_TIMEOUT);
+        $this->setTick(self::DEFAULT_TICK);
     }
 
     public function __call($name, array $arguments) {
@@ -77,6 +80,12 @@ class Pipio {
         $last = time();
 
         while($continue) {
+            foreach($this->consumers as $consumer) {
+                foreach($consumer->wait() as $event) {
+                    $this->events[] = $event;
+                }
+            }
+
             if(count($this->events) > 0) {
                 list($event, $message) = array_shift($this->events);
 
@@ -88,6 +97,8 @@ class Pipio {
                     $last = time();
                 }
             }
+
+            sleep($this->tick);
 
             $continue = count($this->events) > 0 || ($last + $this->timeout > time()) && $this->count_listeners != 0;
         }
@@ -110,6 +121,10 @@ class Pipio {
 
         while($name === null || isset($this->listeners[$event][$name])) {
             $name = $this->generateName($event);
+        }
+
+        foreach($this->consumers as $consumer) {
+            $consumer->addListener($event, $name);
         }
 
         $this->listeners[$event][$name] = $callback;
@@ -146,6 +161,10 @@ class Pipio {
 
     public function setTimeout($timeout) {
         $this->timeout = $timeout;
+    }
+
+    public function setTick($tick) {
+        $this->tick = $tick;
     }
 
     protected function convertEventDescriptor($descriptor) {

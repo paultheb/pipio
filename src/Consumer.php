@@ -3,6 +3,7 @@
 namespace Pipio;
 
 interface Consumer {
-    public function on($event, $name, $message);
-    public function wait(&$events);
+    public function addListener($event, $name);
+    public function removeListener($event, $name);
+    public function wait();
 }

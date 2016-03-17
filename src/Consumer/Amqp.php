@@ -7,7 +7,15 @@ class Amqp implements \Pipio\Consumer {
 
     }
 
-    public function on($event, $name, $message) {
+    public function addListener($event, $name) {
+
+    }
+
+    public function removeListener($event, $name) {
+
+    }
+
+    public function wait() {
 
     }
 }
