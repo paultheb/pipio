@@ -13,6 +13,20 @@ class LoggerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('test', $sim_logger->getLastLog()[1]);
     }
 
+    public function testLoggerAcceptsNullMessage() {
+        $sim_logger = new SimLogger();
+        $logger = new \Pipio\Producer\Logger($sim_logger);
+        $logger->emit('test', null);
+        $this->assertEquals($logger::DEFAULT_LOG_LEVEL, $sim_logger->getLastLog()[0]);
+    }
+
+    public function testLoggerAcceptsNullEmptyArrayMessage() {
+        $sim_logger = new SimLogger();
+        $logger = new \Pipio\Producer\Logger($sim_logger);
+        $logger->emit('test', []);
+        $this->assertEquals($logger::DEFAULT_LOG_LEVEL, $sim_logger->getLastLog()[0]);
+    }
+
     public function testLogLevels() {
         $bad_log_level = 'Pudge';
         $good_log_levels = [];
