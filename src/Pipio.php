@@ -124,7 +124,7 @@ class Pipio {
         }
 
         foreach($this->consumers as $consumer) {
-            $consumer->addListener($event, $name);
+            $consumer->on($event, $name);
         }
 
         $this->listeners[$event][$name] = $callback;
