@@ -13,4 +13,8 @@ class Amqp implements \Pipio\Consumer {
     public function on() {
 
     }
+
+    public function wait() {
+
+    }
 }
