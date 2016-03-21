@@ -30,5 +30,8 @@
             "Pipio\\": "src/",
             "Pipio\\Test\\": "test/"
         }
+    },
+    "provide": {
+        "psr/log-implementation": "1.0.0"
     }
 }
