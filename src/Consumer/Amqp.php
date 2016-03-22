@@ -10,7 +10,7 @@ class Amqp implements \Pipio\Consumer {
     protected $queues = [];
     protected $msgs = [];
 
-    public function __construct(\PhpAmqpLib\Channel $channel) {
+    public function __construct(\PhpAmqpLib\Channel\AMQPChannel $channel) {
         $this->channel = $channel;
     }
 
@@ -39,14 +39,27 @@ class Amqp implements \Pipio\Consumer {
         $passive = false,
         $durable = false,
         $exclusive = false,
-        $auto_delete = false
+        $auto_delete = true,
+        $nowait = false,
+        $arguments = null,
+        $ticket = null
     ) {
-        return $this->channel->queue_declare($queue, $passive, $durable, $exclusive, $auto_delete);
+        return $this->channel->queue_declare(
+            $queue,
+            $passive,
+            $durable,
+            $exclusive,
+            $auto_delete,
+            $nowait,
+            $arguments,
+            $ticket
+        );
     }
 
     public function queueBind(
         $queue,
         $exchange,
+        $routing_key = '',
         $nowait = false,
         $arguments = null,
         $ticket = null
@@ -66,9 +79,13 @@ class Amqp implements \Pipio\Consumer {
         $ticket = null,
         $arguments = []
     ) {
-        $default_callback = function($msg) use (&$this->msgs) {
-            $this->msgs[] = $msg;
-        });
+
+        $temp_msgs = $this->msgs;
+        $default_callback = function($msg) use (&$temp_msgs) {
+            $temp_msgs[] = $msg;
+        };
+
+        $this->msgs = $temp_msgs;
 
         if($callback != null) {
             $user_callback = $callback;
@@ -76,7 +93,7 @@ class Amqp implements \Pipio\Consumer {
             $callback = function($msg) use ($default_callback) {
                 $user_callback($msg);
                 $default_callback($msg);
-            }
+            };
 
 
         } else {
