@@ -15,12 +15,21 @@ class Amqp implements \Pipio\Producer {
 
     public function emit($event, $message) {
         if(!isset($this->exchanges[$event])) {
-            $this->exchangeDeclare($event, self::DEFAULT_EXCHANGE, false, false, false);
+            $this->exchanges[$event] = $this->exchangeDeclare($event);
         }
         $this->channel->basic_publish($message, $event);
     }
 
-    public function exchangeDeclare($event, $type, $passive, $durable, $auto_delete) {
+    public function exchangeDeclare(
+        $event,
+        $type = self::DEFAULT_EXCHANGE,
+        $passive = false,
+        $durable = false,
+        $auto_delete = false,
+        $nowait = false,
+        $arguments = null,
+        $ticket = null
+    ) {
         return $this->channel->exchange_declare($event, $type, $passive, $durable, $auto_delete);
     }
 }
