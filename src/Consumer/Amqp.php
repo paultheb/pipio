@@ -1,7 +1,9 @@
 <?php
 
 namespace Pipio\Consumer;
-
+/**
+ * @todo Figure out a way to do acks.
+ */
 class Amqp implements \Pipio\Consumer {
 
     protected $channel;
@@ -13,15 +15,11 @@ class Amqp implements \Pipio\Consumer {
     }
 
     public function on($event, $name) {
-        if(!isset($this->queues[$name])) {
-            $this->queues[$name] = $name;
+        if(!isset($this->queues[$exchange])) {
+            $queue_name = $this->queueDeclare($name)[0];
+            $this->queueBind($queue_name, $event);
+            $this->basicConsume($queue_name);
         }
-
-        list($queue_name, ,) = $this->queueDeclare($name);
-
-        $this->queueBind($queue_name, $event);
-
-        $this->basicConsume($queue_name);
     }
 
     public function wait() {
@@ -54,6 +52,7 @@ class Amqp implements \Pipio\Consumer {
         $ticket = null
     ) {
         $this->channel->queue_bind($queue, $exchange, '', $nowait, $arguments, $ticket);
+        $this->queues[$exchange] = $queue;
     }
 
     public function basicConsume(

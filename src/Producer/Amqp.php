@@ -9,13 +9,13 @@ class Amqp implements \Pipio\Producer {
     protected $channel;
     protected $exchanges = [];
 
-    public function __construct(\PhpAmqpLib\Channel $channel) {
+    public function __construct(\PhpAmqpLib\Channel\AMQPChannel $channel) {
         $this->channel = $channel;
     }
 
     public function emit($event, $message) {
-        if(!isset($this->exchanges[$event])) {
-            $this->exchanges[$event] = $this->exchangeDeclare($event);
+        if(!in_array($event, array_keys($this->exchanges))) {
+            $this->exchangeDeclare($event);
         }
         $this->channel->basic_publish($message, $event);
     }
@@ -30,6 +30,18 @@ class Amqp implements \Pipio\Producer {
         $arguments = null,
         $ticket = null
     ) {
-        return $this->channel->exchange_declare($event, $type, $passive, $durable, $auto_delete);
+
+        $this->exchanges[$event] = $this->channel->exchange_declare(
+            $event,
+            $type,
+            $passive,
+            $durable,
+            $auto_delete,
+            $nowait,
+            $arguments,
+            $ticket
+        );
+
+        return $this->exchanges[$event];
     }
 }
