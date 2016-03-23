@@ -2,18 +2,24 @@
 
 namespace Pipio\test\Sim;
 
+use PhpAmqpLib\Message\AMQPMessage;
+
 class AmqpChannel extends \PhpAmqpLib\Channel\AMQPChannel {
 
     protected $callback;
 
-    protected $messages = [
-        'message 1',
-        'message 2',
-        'message 3'
-    ];
+    protected $messages;
 
     public function __construct($connection) {
+        $this->messages = [
+            new AMQPMessage('message 1'),
+            new AMQPMessage('message 2'),
+            new AMQPMessage('message 3')
+        ];
 
+        foreach($this->messages as $message) {
+            $message->delivery_info['exchange'] = 'test.test';
+        }
     }
 
     public function wait($allowed_methods = null, $non_blocking = false, $timeout = 0) {
