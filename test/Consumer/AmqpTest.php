@@ -149,5 +149,12 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($values[$index], $parameter);
         }
     }
+    
+    public function testBasicConsumeCallbackCanBeNull() {
+    
+    }
 
+    public function testBasicConsumeCallbackCanBeNotNull() {
+    
+    }
 }

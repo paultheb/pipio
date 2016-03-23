@@ -14,12 +14,13 @@ class Amqp implements \Pipio\Consumer {
         $this->channel = $channel;
     }
 
-    public function on($event, $name) {
-        if(!isset($this->queues[$exchange])) {
+    public function on($event, $name) {    
+        if(!in_array($event, array_keys($this->queues))) {
             $queue_name = $this->queueDeclare($name)[0];
             $this->queueBind($queue_name, $event);
             $this->basicConsume($queue_name);
-        }
+        } 
+        $this->channel->basic_publish($message, $event);
     }
 
     public function wait() {
@@ -90,7 +91,7 @@ class Amqp implements \Pipio\Consumer {
         if($callback != null) {
             $user_callback = $callback;
 
-            $callback = function($msg) use ($default_callback) {
+            $callback = function($msg) use ($default_callback, $user_callback) {
                 $user_callback($msg);
                 $default_callback($msg);
             };
