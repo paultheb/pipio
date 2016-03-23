@@ -4,7 +4,7 @@
 
 Pipio is an evented interface for building scalable, service-oriented applications in PHP. Pipio comes pre-loaded with support for both logging and AMQP.
 
-This library implements the ![PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) interface.
+This library implements the [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) interface.
 
 ## Installation
 
