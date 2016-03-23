@@ -168,14 +168,11 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
         call_user_func_array([$amqp, 'basicConsume'], $parameters);
 
         foreach($parameters as $index => $parameter) {
-
-            $this->assertEquals($values[$index], $parameter);
-
-            // if(gettype($values[$index]) == 'object') {
-            //     $this->assertSame($callback->__invoke(), $parameter->__invoke());
-            // } else {
-            //     $this->assertSame($values[$index], $parameter);
-            // }
+            if(gettype($values[$index]) == 'object') {
+                $this->assertEquals($callback->__invoke(), $parameter->__invoke());
+            } else {
+                $this->assertEquals($values[$index], $parameter);
+            }
         }
     }
 
