@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/paultheb/pipio.svg?branch=master)](https://travis-ci.org/paultheb/pipio.svg?branch=master)
 
-Pipio is an evented interface for scalable, service oriented applications in PHP. Pipio comes pre-loaded with support for both logging and AMQP.
+Pipio is an evented interface for building scalable, service-oriented applications in PHP. Pipio comes pre-loaded with support for both logging and AMQP.
 
 This library implements the ![PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) interface.
 
@@ -24,7 +24,7 @@ Bugs and feature requests are tracked on [GitHub](https://github.com/paultheb/pi
 
 ### Integrations
 
-* Frameworks / libraries using the [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) can be used very easily since Pipio implements the interface.
+* Frameworks / libraries using [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) can be used very easily since Pipio implements the interface.
 * Custom integrations can be simply added by creating your own Pipio producers / consumers. Relevant producers and consumers have already been implemented for both logging and AMQP.
 
 ### Authors
