@@ -29,5 +29,6 @@ Bugs and feature requests are tracked on [GitHub](https://github.com/paultheb/pi
 
 ### Authors
 
-Paul Theberge - <theberge.paul@gmail.com> - <http://twitter.com/_theberge><br/>
-Jonathan Rich - <jdrich@gmail.com>
+[Paul Theberge](https://github.com/paultheb) - <theberge.paul@gmail.com> - <http://twitter.com/_theberge>
+<br/>
+[Jonathan Rich](https://github.com/jdrich) - <jdrich@gmail.com>
