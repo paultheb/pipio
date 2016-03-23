@@ -145,6 +145,10 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
             $values = func_get_args();
         };
 
+        $callback = function() {
+            return 'string';
+        };
+
         $channel = $this->getChannel(null, null, $consume_callback);
 
         $amqp = new Amqp($channel);
@@ -156,7 +160,7 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
             'no_ack',
             'exclusive',
             'nowait',
-            function() {},
+            $callback,
             'ticket',
             'arguments'
         ];
@@ -164,7 +168,14 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
         call_user_func_array([$amqp, 'basicConsume'], $parameters);
 
         foreach($parameters as $index => $parameter) {
+
             $this->assertEquals($values[$index], $parameter);
+
+            // if(gettype($values[$index]) == 'object') {
+            //     $this->assertSame($callback->__invoke(), $parameter->__invoke());
+            // } else {
+            //     $this->assertSame($values[$index], $parameter);
+            // }
         }
     }
 
