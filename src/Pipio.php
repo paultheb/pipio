@@ -82,6 +82,8 @@ class Pipio {
         while($continue) {
             foreach($this->consumers as $consumer) {
                 foreach($consumer->wait() as $event) {
+                    $event = [$this->convertEventDescriptor($event[0]), $event[1]];
+
                     $this->events[] = $event;
                 }
             }

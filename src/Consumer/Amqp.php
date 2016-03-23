@@ -23,12 +23,18 @@ class Amqp implements \Pipio\Consumer {
     }
 
     public function wait() {
-        $this->channel->wait();
+        try {
+            $this->channel->wait(null, true, 1);
+        } catch( \PhpAmqpLib\Exception\AMQPTimeoutException $e ) {
+            // do nothing
+        }
 
         $messages = [];
 
         while(count($this->messages)) {
-            $messages[] = array_shift($this->messages);
+            $message = array_shift($this->messages);
+
+            $messages[] = [$message->get('exchange'), $message->body];
         }
 
         return $messages;

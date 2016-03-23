@@ -2,6 +2,8 @@
 
 namespace Pipio\Producer;
 
+use PhpAmqpLib\Message\AMQPMessage;
+
 class Amqp implements \Pipio\Producer {
 
     const DEFAULT_EXCHANGE = 'fanout';
@@ -17,7 +19,8 @@ class Amqp implements \Pipio\Producer {
         if(!in_array($event, array_keys($this->exchanges))) {
             $this->exchangeDeclare($event);
         }
-        $this->channel->basic_publish($message, $event);
+
+        $this->channel->basic_publish(new AMQPMessage($message), $event);
     }
 
     public function exchangeDeclare(
