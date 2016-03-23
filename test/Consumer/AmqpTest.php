@@ -3,6 +3,7 @@
 namespace Pipio\Test\Consumer;
 
 use Pipio\Consumer\Amqp;
+use Pipio\Test\Sim\AmqpChannel as SimChannel;
 
 class AmqpTest extends \PHPUnit_Framework_TestCase {
 
@@ -38,34 +39,51 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
         return $channel;
     }
 
-    public function testOnDeclaresQueue() {
-        $called = false;
-        $channel = $this->getChannel(function() use (&$called) {
-            $called = true;
-        }, null, null);
-        $amqp = new Amqp($channel);
-        $amqp->on('event', 'name');
-        $this->assertTrue($called);
+    public function getConnection() {
+        $connection = $this->getMockBuilder('\PhpAmqpLib\Connection\AMQPConnection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $connection;
     }
 
-    public function testOnBindsQueue() {
-        $called = false;
-        $channel = $this->getChannel(null, function() use (&$called) {
-            $called = true;
-        }, null);
+    public function testOnConfiguresQueue() {
+        $declare_called = false;
+        $bind_called = false;
+        $consume_called = false;
+
+        $declare_callback = function() use (&$declare_called) {
+            $declare_called = true;
+        };
+
+        $bind_callback = function() use (&$bind_called) {
+            $bind_called = true;
+        };
+
+        $consume_callback = function () use (&$consume_called) {
+            $consume_called = true;
+        };
+
+        $channel = $this->getChannel($declare_callback, $bind_callback, $consume_callback);
+
         $amqp = new Amqp($channel);
-        $amqp->on('event', 'name');
-        $this->assertTrue($called);
+        $amqp->on('test.event', 'name');
+
+        $this->assertTrue($declare_called);
+        $this->assertTrue($bind_called);
+        $this->assertTrue($consume_called);
     }
 
-    public function testOnCallsBasicConsume() {
-        $called = false;
-        $channel = $this->getChannel(null, null, function() use (&$called) {
-            $called = true;
-        });
+    public function testOnDoesNotRedeclareQueue() {
+        $declared = [];
+
+        $channel = $this->getChannel(function() use (&$declared) { $declared[] = func_get_args(); });
+
         $amqp = new Amqp($channel);
-        $amqp->on('event', 'name');
-        $this->assertTrue($called);
+
+        $amqp->on('test.event', 'name');
+        $amqp->on('test.event', 'name');
+
+        $this->assertEquals(1, count($declared));
     }
 
     public function testQueueDeclare() {
@@ -121,7 +139,7 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-    public function testBasicConsume() {
+    public function testBasicConsumeParameters() {
         $values = [];
         $consume_callback = function() use (&$values) {
             $values = func_get_args();
@@ -149,12 +167,46 @@ class AmqpTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($values[$index], $parameter);
         }
     }
-    
-    public function testBasicConsumeCallbackCanBeNull() {
-    
+
+    public function testBasicConsumeWithUserCallback() {
+        $callback_called = 3;
+
+        $connection = $this->getConnection();
+
+        $channel = new SimChannel($connection);
+
+        $amqp = new Amqp($channel);
+
+        $amqp->basicConsume(
+            $queue = '',
+            $consumer_tag = '',
+            $no_local = false,
+            $no_ack = false,
+            $exclusive = false,
+            $nowait = false,
+            $callback = function() use (&$callback_called) {
+                $callback_called -= 1;
+            }
+        );
+
+        $amqp->wait();
+
+        $this->assertEquals(0, $callback_called);
     }
 
-    public function testBasicConsumeCallbackCanBeNotNull() {
-    
+    public function testBasicConsumeDefaultCallback() {
+        $connection = $this->getConnection();
+
+        $channel = new SimChannel($connection);
+
+        $amqp = new Amqp($channel);
+
+        $amqp->basicConsume('queue');
+
+        $messages = $amqp->wait();
+
+        $this->assertEquals(3, count($messages));
+
     }
+
 }

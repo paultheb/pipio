@@ -8,28 +8,27 @@ class Amqp implements \Pipio\Consumer {
 
     protected $channel;
     protected $queues = [];
-    protected $msgs = [];
+    protected $messages = [];
 
     public function __construct(\PhpAmqpLib\Channel\AMQPChannel $channel) {
         $this->channel = $channel;
     }
 
-    public function on($event, $name) {    
+    public function on($event, $name) {
         if(!in_array($event, array_keys($this->queues))) {
             $queue_name = $this->queueDeclare($name)[0];
             $this->queueBind($queue_name, $event);
             $this->basicConsume($queue_name);
-        } 
-        $this->channel->basic_publish($message, $event);
+        }
     }
 
     public function wait() {
-        $channel->wait();
+        $this->channel->wait();
 
         $messages = [];
 
-        while(count($this->msgs)) {
-            $messages[] = array_shift($this->msgs);
+        while(count($this->messages)) {
+            $messages[] = array_shift($this->messages);
         }
 
         return $messages;
@@ -80,13 +79,9 @@ class Amqp implements \Pipio\Consumer {
         $ticket = null,
         $arguments = []
     ) {
-
-        $temp_msgs = $this->msgs;
-        $default_callback = function($msg) use (&$temp_msgs) {
-            $temp_msgs[] = $msg;
+        $default_callback = function($msg) {
+            $this->messages[] = $msg;
         };
-
-        $this->msgs = $temp_msgs;
 
         if($callback != null) {
             $user_callback = $callback;
@@ -113,4 +108,5 @@ class Amqp implements \Pipio\Consumer {
             $arguments
         );
     }
+
 }
