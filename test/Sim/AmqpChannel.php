@@ -16,7 +16,7 @@ class AmqpChannel extends \PhpAmqpLib\Channel\AMQPChannel {
 
     }
 
-    public function wait() {
+    public function wait($allowed_methods = null, $non_blocking = false, $timeout = 0) {
 
         foreach($this->messages as $message) {
             $callback = $this->callback;
