@@ -4,7 +4,9 @@ namespace Pipio\Test\Producer;
 
 use Pipio\Producer\Callback;
 
-class CallbackTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class CallbackTest extends TestCase {
     public function testCallback() {
         $messages = [];
 

@@ -5,7 +5,9 @@ namespace Pipio\Test\Producer;
 use Pipio\Producer\Filter;
 use Pipio\Producer\Callback;
 
-class FilterTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class FilterTest extends TestCase {
     public function testFilter() {
         $messages = [];
 
