@@ -5,7 +5,9 @@ namespace Pipio\Test\Consumer;
 use Pipio\Consumer\Amqp;
 use Pipio\Test\Sim\AmqpChannel as SimChannel;
 
-class AmqpTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class AmqpTest extends TestCase {
 
     public function getChannel($declare_callback = null, $bind_callback = null, $consume_callback = null) {
         if($declare_callback === null) {

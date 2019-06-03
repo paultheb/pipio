@@ -5,9 +5,11 @@ namespace Pipio\Test\Pipio;
 use Pipio\Pipio;
 use Pipio\Test\Sim\Pipio as SimPipio;
 
-class PipioTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class PipioTest extends TestCase {
     public function testCallOverrideThrowsExceptionOnBadMethod() {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException('BadMethodCallException');
 
         $pipio = new Pipio();
 
@@ -15,7 +17,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCallOverrideThrowsExceptionOnBadEmitCall() {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         $pipio = new Pipio();
 
@@ -23,7 +25,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCallOverrideThrowsExceptionOnBadOnCall() {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         $pipio = new Pipio();
 
@@ -31,21 +33,21 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testOnThrowsExceptionOnOverflowLength() {
-        $this->setExpectedException('OutOfBoundsException');
+        $this->expectException('OutOfBoundsException');
 
         $pipio = new Pipio();
         $pipio->on('Test', str_repeat('a', 256), function ($event, $message) {});
     }
 
     public function testOnThrowsExceptionOnUnderflowLength() {
-        $this->setExpectedException('OutOfBoundsException');
+        $this->expectException('OutOfBoundsException');
 
         $pipio = new Pipio();
         $pipio->on('Test', '', function ($event, $message) {});
     }
 
     public function testOnDoesNotAcceptDuplicateListeners() {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         $pipio = new Pipio();
         $pipio->on('Test', 'Test', function($event, $message) {});
@@ -150,7 +152,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
 
 
     public function testConvertEventDescriptorThrowsExceptionOnOverflowLength() {
-        $this->setExpectedException('OutOfBoundsException');
+        $this->expectException('OutOfBoundsException');
 
         $pipio = new SimPipio();
 
@@ -158,7 +160,7 @@ class PipioTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testConvertEventDescriptorThrowsExceptionUnderflowLength() {
-        $this->setExpectedException('OutOfBoundsException');
+        $this->expectException('OutOfBoundsException');
 
         $pipio = new SimPipio();
 

@@ -4,7 +4,9 @@ namespace Pipio\Test\Producer;
 
 use Pipio\Test\Sim\Logger as SimLogger;
 
-class LoggerTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class LoggerTest extends TestCase {
 
     public function testLoggerAcceptsNonArrayMessage() {
         $sim_logger = new SimLogger();
