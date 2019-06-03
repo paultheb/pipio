@@ -16,7 +16,7 @@ Install the latest version with:
 
 ### Requirements
 
-* Pipio works with PHP 5.6 or above, and has been tested to work with HHVM.
+* Pipio works with PHP 5.6 or above.
 
 ### Submitting Bugs / Feature Requests
 
